@@ -8,9 +8,13 @@ import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
 import java.util.UUID
 
 object UserRoutes:
-  def apply(): Routes[UserRepository, Response] =
+  def apply() =
     Routes(
-      Method.GET / "user" -> handler { (_: Request) => Response.text("WOORK")},
+      Method.GET / "user" -> handler { (_: Request) => Response.text("WORKS")},
+      
+      Method.GET / "user" / "my" -> handler { (_: Request) => ZIO.serviceWith[String](
+        name => Response.text(s"Welcome $name!")
+      )},
 
       Method.GET / "user" / uuid("id") -> handler { (id: UUID, _: Request) =>
         UserRepository.getById(id).map(
@@ -22,9 +26,6 @@ object UserRoutes:
        },
     ).handleErrorRequestCauseZIO((request, error) =>
       for {
-        _ <- ZIO.logErrorCause(
-            s"Failed to lookup user.",
-            Cause.fail(error)
-          )
-      } yield Response.internalServerError("Error 200")
+        _ <- ZIO.logErrorCause(s"Failed to lookup user.", Cause.fail(error))
+      } yield Response.internalServerError("500 error")
     )

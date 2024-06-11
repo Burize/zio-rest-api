@@ -13,5 +13,7 @@ libraryDependencies ++= Seq(
   "io.getquill" %% "quill-zio" % "4.7.0",
   "io.getquill" %% "quill-jdbc-zio" % "4.7.0",
   "org.postgresql" % "postgresql" % "42.6.0",
+  "com.github.jwt-scala" %% "jwt-zio-json" % "10.0.1",
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0" cross CrossVersion.for3Use2_13,
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,
 )
