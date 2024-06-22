@@ -17,7 +17,7 @@ object SignupDTO:
 
 
 object AuthRoutes:
-  def apply(): Routes[AuthService & UserRepository, Response]=
+  def apply(): Routes[AuthService & UserRepository, Response] =
     Routes(
       Method.POST / "signup" -> handler { (request: Request) =>
         for {
