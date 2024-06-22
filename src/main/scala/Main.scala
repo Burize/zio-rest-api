@@ -13,18 +13,19 @@ import middlewares.bearerAuthAspect
 import storage.api.StorageRoutes
 import storage.services.LocalFileStorage
 
-
-val protectedRoutes = UserRoutes() @@ bearerAuthAspect
+val protectedRoutes   = UserRoutes() @@ bearerAuthAspect
 val unProtectedRoutes = AuthRoutes() ++ StorageRoutes()
 
 object App extends ZIOAppDefault:
-  def run = Server.serve(protectedRoutes ++ unProtectedRoutes @@ Middleware.debug).provide(
-    Server.defaultWithPort(7777),
-    Quill.Postgres.fromNamingStrategy(SnakeCase),
-    Quill.DataSource.fromPrefix("database"),
-    UserRepositoryImpl.layer,
-    AuthServiceImpl.layer,
-    Client.default,
-    Scope.default,
-    ZLayer.succeed(LocalFileStorage(Path("/Users/burize/Desktop/rest_api_storage")))
-  )
+  def run = Server
+    .serve(protectedRoutes ++ unProtectedRoutes @@ Middleware.debug)
+    .provide(
+      Server.defaultWithPort(7777),
+      Quill.Postgres.fromNamingStrategy(SnakeCase),
+      Quill.DataSource.fromPrefix("database"),
+      UserRepositoryImpl.layer,
+      AuthServiceImpl.layer,
+      Client.default,
+      Scope.default,
+      ZLayer.succeed(LocalFileStorage(Path("/Users/burize/Desktop/rest_api_storage"))),
+    )
