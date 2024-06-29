@@ -5,7 +5,6 @@ import io.getquill.*
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres
 import zio.*
-import zio.json.{ SnakeCase as _, * }
 
 import java.util.UUID
 

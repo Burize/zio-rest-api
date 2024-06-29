@@ -12,8 +12,8 @@ import java.util.UUID
 import scala.util.*
 
 case class SignupDTO(username: String, password: String)
-object SignupDTO:
-  given Schema[SignupDTO] = DeriveSchema.gen[SignupDTO]
+
+given Schema[SignupDTO] = DeriveSchema.gen[SignupDTO]
 
 object AuthRoutes:
   def apply(): Routes[AuthService & UserRepository, Response] =

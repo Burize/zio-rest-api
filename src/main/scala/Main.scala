@@ -10,11 +10,13 @@ import zio.http.Client
 import zio.nio.file.Path
 import io.getquill.jdbczio.Quill
 import middlewares.bearerAuthAspect
+import product.api.ProductRoutes
+import product.repositories.ProductRepositoryImpl
 import storage.api.StorageRoutes
 import storage.services.LocalFileStorage
 
-val protectedRoutes   = UserRoutes() @@ bearerAuthAspect
-val unProtectedRoutes = AuthRoutes() ++ StorageRoutes()
+val protectedRoutes   = (UserRoutes() ++ StorageRoutes() ++ ProductRoutes()) @@ bearerAuthAspect
+val unProtectedRoutes = AuthRoutes()
 
 object App extends ZIOAppDefault:
   def run = Server
@@ -24,6 +26,7 @@ object App extends ZIOAppDefault:
       Quill.Postgres.fromNamingStrategy(SnakeCase),
       Quill.DataSource.fromPrefix("database"),
       UserRepositoryImpl.layer,
+      ProductRepositoryImpl.layer,
       AuthServiceImpl.layer,
       Client.default,
       Scope.default,
