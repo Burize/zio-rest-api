@@ -13,10 +13,11 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio-nio" % "2.0.2",
   "dev.zio" %% "zio-test" % "2.1.5" % Test,
   "io.getquill" %% "quill-zio" % "4.7.0",
-  "io.getquill" %% "quill-jdbc-zio" % "4.7.0",
+  "io.getquill" %% "quill-jdbc-zio" % "4.8.5" exclude ("com.lihaoyi", "geny_2.13"),
   "org.postgresql" % "postgresql" % "42.6.0",
   "com.github.jwt-scala" %% "jwt-zio-json" % "10.0.1",
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0" cross CrossVersion.for3Use2_13,
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,
   "org.flywaydb"  % "flyway-core" % "9.21.1",
+  "com.lihaoyi" %% "ujson" % "3.1.2",
 )

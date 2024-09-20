@@ -1,4 +1,5 @@
-package utils
+package testUtils
+
 import io.getquill.SnakeCase
 import io.getquill.jdbczio.Quill
 import zio.*

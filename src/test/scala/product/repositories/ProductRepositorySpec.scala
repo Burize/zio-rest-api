@@ -5,7 +5,7 @@ import io.getquill.SnakeCase
 import io.getquill.jdbczio.Quill
 import product.entities.*
 import product.entities.given
-import utils.DataBaseIsolation
+import testUtils.DataBaseIsolation
 import zio.*
 import zio.test.*
 import zio.json.JsonEncoder

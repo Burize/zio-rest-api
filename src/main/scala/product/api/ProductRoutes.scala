@@ -4,7 +4,6 @@ import auth.repositories.UserRepository
 import auth.services.AuthService
 import product.entities.{Language, ProductType}
 import product.repositories.{CreateProduct, ProductRepository}
-import utils.hashPassword
 import zio.*
 import zio.http.*
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
