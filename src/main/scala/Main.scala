@@ -2,6 +2,7 @@ import auth.api.UserRoutes
 import auth.api.AuthRoutes
 import auth.repositories.UserRepositoryImpl
 import auth.services.AuthServiceImpl
+import core.AppConfig
 import io.getquill.SnakeCase
 import zio.*
 import zio.http.Server
@@ -19,9 +20,13 @@ val protectedRoutes   = (UserRoutes() ++ StorageRoutes() ++ ProductRoutes()) @@ 
 val unProtectedRoutes = AuthRoutes()
 
 object App extends ZIOAppDefault:
+  override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] =
+    Runtime.setConfigProvider(AppConfig.configProvider)
+    
   def run = Server
     .serve(protectedRoutes ++ unProtectedRoutes @@ Middleware.debug)
     .provide(
+      AppConfig.layer,
       Server.defaultWithPort(7777),
       Quill.Postgres.fromNamingStrategy(SnakeCase),
       Quill.DataSource.fromPrefix("database"),
