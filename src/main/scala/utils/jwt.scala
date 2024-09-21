@@ -10,4 +10,4 @@ def jwtDecode(token: String, key: String): Try[JwtClaim] =
   Jwt.decode(token, key, Seq(JwtAlgorithm.HS512))
 
 def jwtEncode(payload: String, key: String): String =
-  Jwt.encode(JwtClaim(subject = Some(payload)).issuedNow.expiresIn(300), key, JwtAlgorithm.HS512)
+  Jwt.encode(JwtClaim(content = payload).issuedNow.expiresIn(300), key, JwtAlgorithm.HS512)

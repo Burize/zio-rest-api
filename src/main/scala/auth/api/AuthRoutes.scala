@@ -1,23 +1,23 @@
 package auth.api
 
+import auth.entities.UserSession
 import auth.repositories.UserRepository
 import auth.services.AuthService
 import core.AppConfig
 import utils.jwtEncode
 import zio.*
 import zio.http.*
+import zio.json._
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
 import zio.schema.{DeriveSchema, Schema}
 
 import java.util.UUID
 import scala.util.*
 
-case class SignUpDTO(username: String, password: String)
-
+case class SignUpDTO(username: String, password: String, name: Option[String])
 given Schema[SignUpDTO] = DeriveSchema.gen[SignUpDTO]
 
 case class SignInDTO(username: String, password: String)
-
 given Schema[SignInDTO] = DeriveSchema.gen[SignInDTO]
 
 object AuthRoutes:
@@ -27,7 +27,7 @@ object AuthRoutes:
         for
           dto      <- request.body.to[SignUpDTO].orElseFail(Response.badRequest)
           response <- AuthService
-                        .signUp(dto.username, dto.password)
+                        .signUp(dto.username, dto.password, dto.name)
                         .mapBoth(
                           error => Response.internalServerError(s"Failed to register the user: $error"),
                           user => Response.text(user.id.toString),
@@ -42,7 +42,8 @@ object AuthRoutes:
                               .mapError(
                                 error => Response.internalServerError(s"Failed to sign in the user: $error"),
                               )
-          sessionHeader = Header.Authorization.Bearer(jwtEncode(user.id.toString, config.session.jwt_secret_key))
+          userSession = UserSession(user.id).toJson
+          sessionHeader = Header.Authorization.Bearer(jwtEncode(userSession, config.session.jwt_secret_key))
         yield Response.ok.addHeader(sessionHeader)
       },
     )

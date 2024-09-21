@@ -9,13 +9,13 @@ import zio.*
 import java.util.UUID
 
 trait UserRepository:
-  def create(username: String, password: String): ZIO[UserRepository, Throwable, User]
+  def create(username: String, password: String, name: Option[String]): ZIO[UserRepository, Throwable, User]
   def getById(id: UUID): ZIO[UserRepository, Throwable, Option[User]]
   def findByUsername(username: String): ZIO[UserRepository, Throwable, Option[User]]
 
 object UserRepository:
-  def create(username: String, password: String): ZIO[UserRepository, Throwable, User] =
-    ZIO.serviceWithZIO[UserRepository](_.create(username, password))
+  def create(username: String, password: String, name: Option[String]): ZIO[UserRepository, Throwable, User] =
+    ZIO.serviceWithZIO[UserRepository](_.create(username, password, name))
 
   def getById(id: UUID): ZIO[UserRepository, Throwable, Option[User]] =
     ZIO.serviceWithZIO[UserRepository](_.getById(id))
@@ -26,8 +26,8 @@ object UserRepository:
 case class UserRepositoryImpl(quill: Quill.Postgres[SnakeCase]) extends UserRepository:
   import quill.*
 
-  def create(username: String, password: String): Task[User] =
-    val user = User(UUID.randomUUID(), username, password)
+  def create(username: String, password: String, name: Option[String]): Task[User] =
+    val user = User(UUID.randomUUID(), username, password, name)
     run(
       quote {
         querySchema[User]("auth_user")
@@ -40,7 +40,7 @@ case class UserRepositoryImpl(quill: Quill.Postgres[SnakeCase]) extends UserRepo
       quote {
         querySchema[User]("auth_user")
           .filter(row => row.id == lift(id))
-          .map(row => User(row.id, row.username, row.password))
+          .map(row => User(row.id, row.username, row.password, row.name))
       }
     ).map(_.headOption)
 
@@ -49,7 +49,7 @@ case class UserRepositoryImpl(quill: Quill.Postgres[SnakeCase]) extends UserRepo
       quote {
         querySchema[User]("auth_user")
           .filter(row => row.username == lift(username))
-          .map(row => User(row.id, row.username, row.password))
+          .map(row => User(row.id, row.username, row.password, row.name))
       }
     ).map(_.headOption)
 end UserRepositoryImpl
