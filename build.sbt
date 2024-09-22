@@ -15,6 +15,9 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio-config-magnolia" % "4.0.2",
   "dev.zio" %% "zio-config-typesafe" % "4.0.2",
   "dev.zio" %% "zio-config" % "4.0.2",
+  "dev.zio" %% "zio-test" % "2.1.9" % Test,
+  "dev.zio" %% "zio-test-sbt" % "2.1.9" % Test,
+  "dev.zio" %% "zio-http-testkit" % "3.0.1" % Test,
   "io.getquill" %% "quill-zio" % "4.7.0",
   "io.getquill" %% "quill-jdbc-zio" % "4.8.5" exclude ("com.lihaoyi", "geny_2.13"),
   "org.postgresql" % "postgresql" % "42.6.0",
@@ -24,3 +27,5 @@ libraryDependencies ++= Seq(
   "org.flywaydb"  % "flyway-core" % "9.21.1",
   "com.lihaoyi" %% "ujson" % "3.1.2",
 )
+
+testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")

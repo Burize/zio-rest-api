@@ -6,9 +6,8 @@ import io.getquill.*
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres
 import product.entities.*
-import zio.json.JsonDecoder
-import product.entities.given
 import zio.*
+import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 
 case class CreateProduct(

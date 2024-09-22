@@ -1,5 +1,7 @@
 package core
 
-sealed trait AppError(message: String) extends Throwable
+final case class NotFoundError(message: String) extends Exception
 
-final case class NotFoundError(message: String) extends AppError(message: String)
+final case class AlreadyExist(message: String) extends Exception
+
+final case class Unauthorized(message: String) extends Exception

@@ -30,26 +30,21 @@ case class UserRepositoryImpl(quill: Quill.Postgres[SnakeCase]) extends UserRepo
     val user = User(UUID.randomUUID(), username, password, name)
     run(
       quote {
-        querySchema[User]("auth_user")
-          .insertValue(lift(user))
+        querySchema[User]("auth_user").insertValue(lift(user))
       }
     ).map(_ => user)
 
   def getById(id: UUID): Task[Option[User]] =
     run(
       quote {
-        querySchema[User]("auth_user")
-          .filter(row => row.id == lift(id))
-          .map(row => User(row.id, row.username, row.password, row.name))
+        querySchema[User]("auth_user").filter(row => row.id == lift(id))
       }
     ).map(_.headOption)
 
   def findByUsername(username: String): Task[Option[User]] =
     run(
       quote {
-        querySchema[User]("auth_user")
-          .filter(row => row.username == lift(username))
-          .map(row => User(row.id, row.username, row.password, row.name))
+        querySchema[User]("auth_user").filter(row => row.username == lift(username))
       }
     ).map(_.headOption)
 end UserRepositoryImpl
