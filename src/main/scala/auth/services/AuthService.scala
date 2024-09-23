@@ -9,23 +9,23 @@ import zio.*
 import scala.util.*
 
 trait AuthService:
-  def signUp(username: String, password: String, name: Option[String]): ZIO[UserRepository, Throwable, User]
+  def signUp(username: String, password: String, name: Option[String] = None, admin: Boolean = false): ZIO[UserRepository, Throwable, User]
   def signIn(username: String, password: String): ZIO[UserRepository, Throwable, User]
 
 object AuthService:
-  def signUp(username: String, password: String, name: Option[String]) =
-    ZIO.serviceWithZIO[AuthService](_.signUp(username, password, name))
+  def signUp(username: String, password: String, name: Option[String] = None, admin: Boolean = false) =
+    ZIO.serviceWithZIO[AuthService](_.signUp(username, password, name, admin))
 
   def signIn(username: String, password: String) =
     ZIO.serviceWithZIO[AuthService](_.signIn(username, password))
 
 class AuthServiceImpl extends AuthService:
-  def signUp(username: String, password: String, name: Option[String]): ZIO[UserRepository, Throwable, User] =
+  def signUp(username: String, password: String, name: Option[String] = None, admin: Boolean = false): ZIO[UserRepository, Throwable, User] =
     for
       existingUser   <- UserRepository.findByUsername(username)
       _              <- if existingUser.nonEmpty then ZIO.fail(AlreadyExist("Already taken")) else ZIO.succeed("")
       hashedPassword <- ZIO.fromTry(hashPassword(password))
-      user           <- UserRepository.create(username, hashedPassword, name)
+      user           <- UserRepository.create(username, hashedPassword, name, admin)
     yield user
 
   def signIn(username: String, password: String): ZIO[UserRepository, Throwable, User] =

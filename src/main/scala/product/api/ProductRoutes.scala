@@ -21,7 +21,7 @@ case class CreateProductDTO(
 given Schema[CreateProductDTO] = DeriveSchema.gen[CreateProductDTO]
 
 object ProductRoutes:
-  def apply(): Routes[ProductRepository, Response] =
+  def apply() =
     Routes(
       Method.PUT / "product" / "batch" -> handler { (request: Request) =>
         for

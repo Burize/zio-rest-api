@@ -8,7 +8,5 @@ final case class User(
     username: String,
     password: String,
     name: Option[String],
+    admin: Boolean
   )
-
-object User:
-  given Schema[User] = DeriveSchema.gen[User]

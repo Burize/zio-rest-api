@@ -10,21 +10,19 @@ import zio.http.Middleware
 import zio.http.Client
 import zio.nio.file.Path
 import io.getquill.jdbczio.Quill
-import middlewares.bearerAuthAspect
 import product.api.ProductRoutes
 import product.repositories.ProductRepositoryImpl
 import storage.api.StorageRoutes
 import storage.services.LocalFileStorage
 
-val protectedRoutes   = (UserRoutes() ++ StorageRoutes() ++ ProductRoutes()) @@ bearerAuthAspect
-val unProtectedRoutes = AuthRoutes()
+val routes = AuthRoutes() ++ UserRoutes() ++ StorageRoutes() ++ ProductRoutes()
 
 object App extends ZIOAppDefault:
   override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] =
     Runtime.setConfigProvider(AppConfig.configProvider)
     
   def run = Server
-    .serve(protectedRoutes ++ unProtectedRoutes @@ Middleware.debug)
+    .serve(routes @@ Middleware.debug)
     .provide(
       AppConfig.layer,
       Server.defaultWithPort(7777),
@@ -33,7 +31,5 @@ object App extends ZIOAppDefault:
       UserRepositoryImpl.layer,
       ProductRepositoryImpl.layer,
       AuthServiceImpl.layer,
-      Client.default,
-      Scope.default,
       ZLayer.succeed(LocalFileStorage(Path("/Users/burize/Desktop/rest_api_storage"))),
     )

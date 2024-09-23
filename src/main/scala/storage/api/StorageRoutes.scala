@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 object StorageRoutes:
-  def apply(): Routes[FileStorage & Client & Scope, Response] =
+  def apply() =
     Routes(
       Method.GET / "storage" / string("fileName")  -> handler { (fileName: String, _: Request) =>
         for fileStream <- FileStorage.downloadFile(fileName = fileName)
@@ -34,4 +34,3 @@ object StorageRoutes:
         case NotFoundError(message) => Response.notFound(message)
         case _                      => Response.internalServerError("500 error")
     )
-end StorageRoutes

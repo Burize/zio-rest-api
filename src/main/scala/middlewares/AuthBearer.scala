@@ -16,7 +16,7 @@ import utils.jwtDecode
 val INVALID_JWT_ERROR = "Invalid or expired token!"
 
 
-val bearerAuthAspect: HandlerAspect[AppConfig & UserRepository, User] =
+val AuthBearer: HandlerAspect[AppConfig & UserRepository, User] =
   HandlerAspect.interceptIncomingHandler(Handler.fromFunctionZIO[Request] { request =>
     request.header(Header.Authorization) match
       case Some(Header.Authorization.Bearer(token)) =>

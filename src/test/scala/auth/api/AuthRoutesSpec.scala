@@ -41,7 +41,6 @@ object AuthRoutesSpec extends ZIOSpecDefault {
           _ <- TestServer.addRoutes(AuthRoutes())
           response <- client.batched(request)
           responseBody <- response.body.asString
-
           ctx <- ZIO.service[Quill.Postgres[SnakeCase]]
           createdUserOpt <- ctx.run(quote(querySchema[User]("auth_user").filter(row => row.username == lift(username)))).map(_.headOption)
           createdUser <- ZIO.fromOption(createdUserOpt).orElseFail("User was not created")
@@ -59,7 +58,7 @@ object AuthRoutesSpec extends ZIOSpecDefault {
         val payload = SignUpDTO(username = username, password = password, name = None)
         for {
           userRepository <- ZIO.service[UserRepository]
-          _ <- userRepository.create(username = username, password = password, name = None)
+          _ <- userRepository.create(username = username, password = password)
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.post(url = URL.root.port(port) / "signup", body = Body.from(payload))
@@ -79,7 +78,7 @@ object AuthRoutesSpec extends ZIOSpecDefault {
         val payload = SignInDTO(username = username, password = password)
         for {
           authService <- ZIO.service[AuthService]
-          user <- authService.signUp(username = username, password = password, name = None)
+          user <- authService.signUp(username = username, password = password)
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.post(url = URL.root.port(port) / "signin", body = Body.from(payload))
@@ -97,12 +96,12 @@ object AuthRoutesSpec extends ZIOSpecDefault {
           userSession.userId == user.id
         )
       },
-      test("Should return unauthorized if username or password is not correct") {
+      test("Should return unauthorized status if username or password is not correct") {
         val username = UUID.randomUUID().toString
         val payload = SignInDTO(username = username, password = "200")
         for {
           authService <- ZIO.service[AuthService]
-          _ <- authService.signUp(username = username, password = "100", name = None)
+          _ <- authService.signUp(username = username, password = "100")
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.post(url = URL.root.port(port) / "signin", body = Body.from(payload))
