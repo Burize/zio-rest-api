@@ -1,8 +1,5 @@
-package auth.api
+package auth
 
-import auth.entities.UserSession
-import auth.repositories.UserRepository
-import auth.services.AuthService
 import core.{AlreadyExist, AppConfig, Unauthorized}
 import utils.jwtEncode
 import zio.*

@@ -6,14 +6,9 @@ import io.getquill.jdbczio.Quill
 
 import api.apiRoutes
 import core.AppConfig
-import auth.api.UserRoutes
-import auth.api.AuthRoutes
-import auth.repositories.UserRepositoryImpl
-import auth.services.AuthServiceImpl
-import product.api.ProductRoutes
-import product.repositories.ProductRepositoryImpl
-import storage.api.StorageRoutes
-import storage.services.LocalFileStorage
+import auth.{AuthServiceImpl, UserRepositoryImpl}
+import product.ProductRepositoryImpl
+import storage.LocalFileStorage
 
 
 object App extends ZIOAppDefault:

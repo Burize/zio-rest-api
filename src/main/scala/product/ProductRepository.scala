@@ -1,14 +1,12 @@
-package product.repositories
+package product
 
-import java.util.UUID
-import auth.entities.User
 import io.getquill.*
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres
-import product.entities.*
 import zio.*
-import zio.json.JsonDecoder
-import zio.json.JsonEncoder
+import zio.json.{JsonDecoder, JsonEncoder}
+
+import java.util.UUID
 
 case class CreateProduct(
     productType: ProductType,

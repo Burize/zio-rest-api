@@ -1,16 +1,11 @@
-package auth.api
+package auth
 
-import auth.entities.User
-import auth.repositories.UserRepository
-import auth.services.AuthService
 import core.AppConfig
-import middlewares.PermissionAdmin
-import middlewares.AuthBearer
-
+import middlewares.{AuthBearer, PermissionAdmin}
 import zio.*
 import zio.http.*
-import zio.schema.{DeriveSchema, Schema}
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
+import zio.schema.{DeriveSchema, Schema}
 
 import java.util.UUID
 

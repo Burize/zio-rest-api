@@ -1,6 +1,5 @@
-package auth.repositories
+package auth
 
-import auth.entities.User
 import io.getquill.*
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres

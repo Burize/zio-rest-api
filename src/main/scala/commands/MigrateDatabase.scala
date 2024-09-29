@@ -1,11 +1,10 @@
 package commands
 
-import auth.repositories.UserRepositoryImpl
-import auth.services.AuthServiceImpl
+import auth.{AuthServiceImpl, UserRepositoryImpl}
 import database.DatabaseMigrator
 import io.getquill.SnakeCase
 import io.getquill.jdbczio.Quill
-import product.repositories.ProductRepositoryImpl
+import product.ProductRepositoryImpl
 import zio.{Scope, ZIOAppDefault, ZLayer}
 import zio.http.{Client, Middleware, Server}
 import zio.nio.file.Path

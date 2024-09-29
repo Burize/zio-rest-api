@@ -1,3 +1,5 @@
+package auth
+
 import zio.*
 import zio.json.*
 import zio.http.*
@@ -5,23 +7,19 @@ import zio.http.netty.NettyConfig
 import zio.http.netty.server.NettyDriver
 import zio.test.*
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
+import zio.nio.file.Path
 import io.getquill.*
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres
 import io.getquill.{PostgresZioJdbcContext, SnakeCase}
 import java.util.UUID
-import zio.nio.file.Path
 
 import api.apiRoutes
-import auth.api.{AuthRoutes, SignInDTO, SignUpDTO}
-import auth.entities.{User, UserSession}
-import auth.repositories.{UserRepository, UserRepositoryImpl}
-import auth.services.{AuthService, AuthServiceImpl}
 import core.AppConfig
-import product.repositories.ProductRepositoryImpl
+import product.ProductRepositoryImpl
+import storage.LocalFileStorage
 import testUtils.DataBaseIsolation
 import utils.{checkPassword, jwtDecode}
-import storage.services.LocalFileStorage
 
 
 object AuthRoutesSpec extends ZIOSpecDefault {

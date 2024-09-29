@@ -1,6 +1,7 @@
-package auth.entities
+package auth
 
-import zio.schema.{ DeriveSchema, Schema }
+import zio.schema.{DeriveSchema, Schema}
+
 import java.util.UUID
 
 final case class User(

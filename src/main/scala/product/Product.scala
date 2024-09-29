@@ -1,4 +1,4 @@
-package product.entities
+package product
 
 import io.getquill.{JsonbValue, MappedEncoding}
 import zio.json.{JsonDecoder, JsonEncoder}

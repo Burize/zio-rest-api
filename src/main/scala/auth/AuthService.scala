@@ -1,7 +1,5 @@
-package auth.services
+package auth
 
-import auth.entities.User
-import auth.repositories.UserRepository
 import core.{AlreadyExist, Unauthorized}
 import utils.{checkPassword, hashPassword}
 import zio.*

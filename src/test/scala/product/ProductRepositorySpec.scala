@@ -1,18 +1,17 @@
-package product.repositories
+package product
 
 import io.getquill.*
 import io.getquill.SnakeCase
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres
-import product.entities.*
-import testUtils.DataBaseIsolation
 import zio.*
 import zio.test.*
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
-
 import java.sql.Connection
 import javax.sql.DataSource
+
+import testUtils.DataBaseIsolation
 
 
 object ProductRepositorySpec extends ZIOSpecDefault {

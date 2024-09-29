@@ -1,13 +1,12 @@
-package storage.api
+package storage
 
-import core.NotFoundError
 import zio.*
 import zio.http.*
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
-import storage.services.FileStorage
 
 import java.nio.charset.StandardCharsets
 import java.util.UUID
+
 
 object StorageRoutes:
   def apply() =

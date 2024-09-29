@@ -1,7 +1,6 @@
 package middlewares
 
-import auth.entities.{User, UserSession}
-import auth.repositories.UserRepository
+import auth.{User, UserRepository, UserSession}
 import core.AppConfig
 import zio.*
 import zio.http.*

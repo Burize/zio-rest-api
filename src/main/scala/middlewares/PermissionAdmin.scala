@@ -1,7 +1,6 @@
 package middlewares
 
-import auth.entities.User
-import auth.repositories.UserRepository
+import auth.{User, UserRepository}
 import core.AppConfig
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim}
 import utils.jwtDecode

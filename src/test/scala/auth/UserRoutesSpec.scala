@@ -1,30 +1,25 @@
-package auth.api
+package auth
 
 import zio.*
 import zio.http.*
 import zio.http.netty.NettyConfig
 import zio.http.netty.server.NettyDriver
 import zio.json.*
+import zio.nio.file.Path
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
 import zio.test.*
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres
 import io.getquill.{SnakeCase, *}
 import java.util.UUID
-import zio.nio.file.Path
 
 import api.apiRoutes
-import auth.api.{SignInDTO, SignUpDTO, UserRoutes}
-import auth.entities.{User, UserSession}
-import auth.repositories.{UserRepository, UserRepositoryImpl}
-import auth.services.{AuthService, AuthServiceImpl}
 import core.AppConfig
-
 import middlewares.AuthBearer
-import product.repositories.ProductRepositoryImpl
+import product.ProductRepositoryImpl
+import storage.LocalFileStorage
 import testUtils.DataBaseIsolation
 import utils.{checkPassword, jwtDecode, jwtEncode}
-import storage.services.LocalFileStorage
 
 
 given userDTODecoder: JsonDecoder[UserDTO] = DeriveJsonDecoder.gen[UserDTO]
