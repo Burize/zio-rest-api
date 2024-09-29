@@ -1,15 +1,3 @@
-import auth.api.{AuthRoutes, SignInDTO, SignUpDTO}
-import auth.entities.{User, UserSession}
-import auth.repositories.{UserRepository, UserRepositoryImpl}
-import auth.services.{AuthService, AuthServiceImpl}
-import core.AppConfig
-import io.getquill.*
-import io.getquill.jdbczio.Quill
-import io.getquill.jdbczio.Quill.Postgres
-import io.getquill.{PostgresZioJdbcContext, SnakeCase}
-import product.repositories.ProductRepositoryImpl
-import testUtils.DataBaseIsolation
-import utils.{checkPassword, jwtDecode}
 import zio.*
 import zio.json.*
 import zio.http.*
@@ -17,8 +5,24 @@ import zio.http.netty.NettyConfig
 import zio.http.netty.server.NettyDriver
 import zio.test.*
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
-
+import io.getquill.*
+import io.getquill.jdbczio.Quill
+import io.getquill.jdbczio.Quill.Postgres
+import io.getquill.{PostgresZioJdbcContext, SnakeCase}
 import java.util.UUID
+import zio.nio.file.Path
+
+import api.apiRoutes
+import auth.api.{AuthRoutes, SignInDTO, SignUpDTO}
+import auth.entities.{User, UserSession}
+import auth.repositories.{UserRepository, UserRepositoryImpl}
+import auth.services.{AuthService, AuthServiceImpl}
+import core.AppConfig
+import product.repositories.ProductRepositoryImpl
+import testUtils.DataBaseIsolation
+import utils.{checkPassword, jwtDecode}
+import storage.services.LocalFileStorage
+
 
 object AuthRoutesSpec extends ZIOSpecDefault {
   val dsDelegate = new PostgresZioJdbcContext(SnakeCase)
@@ -38,7 +42,7 @@ object AuthRoutesSpec extends ZIOSpecDefault {
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.post(url = URL.root.port(port) / "signup", body = Body.from(payload))
-          _ <- TestServer.addRoutes(AuthRoutes())
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           responseBody <- response.body.asString
           ctx <- ZIO.service[Quill.Postgres[SnakeCase]]
@@ -62,7 +66,7 @@ object AuthRoutesSpec extends ZIOSpecDefault {
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.post(url = URL.root.port(port) / "signup", body = Body.from(payload))
-          _ <- TestServer.addRoutes(AuthRoutes())
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           responseBody <- response.body.asString
         } yield assertTrue(
@@ -82,7 +86,7 @@ object AuthRoutesSpec extends ZIOSpecDefault {
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.post(url = URL.root.port(port) / "signin", body = Body.from(payload))
-          _ <- TestServer.addRoutes(AuthRoutes())
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           authorizationHeader <- ZIO.fromOption(response.header(Header.Authorization))
           token <- authorizationHeader match
@@ -105,7 +109,7 @@ object AuthRoutesSpec extends ZIOSpecDefault {
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.post(url = URL.root.port(port) / "signin", body = Body.from(payload))
-          _ <- TestServer.addRoutes(AuthRoutes())
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           responseBody <- response.body.asString
         } yield assertTrue(
@@ -126,6 +130,9 @@ object AuthRoutesSpec extends ZIOSpecDefault {
     Quill.DataSource.fromPrefix("database"),
     UserRepositoryImpl.layer,
     AuthServiceImpl.layer,
+    ProductRepositoryImpl.layer,
+    ZLayer.succeed(LocalFileStorage(Path("/Users/burize/Desktop/rest_api_storage"))),
+
     //DataBaseIsolation.layer, // TODO: does not work. Probably, Isolation and Route handler use different db connection
   )
 }

@@ -1,28 +1,27 @@
+import io.getquill.SnakeCase
+import zio.*
+import zio.http.{Client, Middleware, Response, Server}
+import zio.nio.file.Path
+import io.getquill.jdbczio.Quill
+
+import api.apiRoutes
+import core.AppConfig
 import auth.api.UserRoutes
 import auth.api.AuthRoutes
 import auth.repositories.UserRepositoryImpl
 import auth.services.AuthServiceImpl
-import core.AppConfig
-import io.getquill.SnakeCase
-import zio.*
-import zio.http.Server
-import zio.http.Middleware
-import zio.http.Client
-import zio.nio.file.Path
-import io.getquill.jdbczio.Quill
 import product.api.ProductRoutes
 import product.repositories.ProductRepositoryImpl
 import storage.api.StorageRoutes
 import storage.services.LocalFileStorage
 
-val routes = AuthRoutes() ++ UserRoutes() ++ StorageRoutes() ++ ProductRoutes()
 
 object App extends ZIOAppDefault:
   override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] =
     Runtime.setConfigProvider(AppConfig.configProvider)
     
   def run = Server
-    .serve(routes @@ Middleware.debug)
+    .serve(apiRoutes)
     .provide(
       AppConfig.layer,
       Server.defaultWithPort(7777),

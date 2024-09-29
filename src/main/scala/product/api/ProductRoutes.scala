@@ -31,10 +31,7 @@ object ProductRoutes:
               .upsertMany(
                 Seq(dto).map(product => CreateProduct(product.productType, product.title, product.description))
               )
-              .mapBoth(
-                error => Response.internalServerError(s"Failed to register the user: $error"),
-                _ => Response.text("OK"),
-              )
+              .map(_ => Response.text("OK"))
         yield response
       }
     )

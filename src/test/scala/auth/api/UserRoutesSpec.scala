@@ -1,17 +1,5 @@
 package auth.api
 
-import auth.api.{SignInDTO, SignUpDTO, UserRoutes}
-import auth.entities.{User, UserSession}
-import auth.repositories.{UserRepository, UserRepositoryImpl}
-import auth.services.{AuthService, AuthServiceImpl}
-import core.AppConfig
-import io.getquill.jdbczio.Quill
-import io.getquill.jdbczio.Quill.Postgres
-import io.getquill.{SnakeCase, *}
-import middlewares.AuthBearer
-import product.repositories.ProductRepositoryImpl
-import testUtils.DataBaseIsolation
-import utils.{checkPassword, jwtDecode, jwtEncode}
 import zio.*
 import zio.http.*
 import zio.http.netty.NettyConfig
@@ -19,10 +7,25 @@ import zio.http.netty.server.NettyDriver
 import zio.json.*
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
 import zio.test.*
-
+import io.getquill.jdbczio.Quill
+import io.getquill.jdbczio.Quill.Postgres
+import io.getquill.{SnakeCase, *}
 import java.util.UUID
+import zio.nio.file.Path
 
-val routes = UserRoutes() @@ AuthBearer
+import api.apiRoutes
+import auth.api.{SignInDTO, SignUpDTO, UserRoutes}
+import auth.entities.{User, UserSession}
+import auth.repositories.{UserRepository, UserRepositoryImpl}
+import auth.services.{AuthService, AuthServiceImpl}
+import core.AppConfig
+
+import middlewares.AuthBearer
+import product.repositories.ProductRepositoryImpl
+import testUtils.DataBaseIsolation
+import utils.{checkPassword, jwtDecode, jwtEncode}
+import storage.services.LocalFileStorage
+
 
 given userDTODecoder: JsonDecoder[UserDTO] = DeriveJsonDecoder.gen[UserDTO]
 
@@ -48,7 +51,7 @@ object UserRoutesSpec extends ZIOSpecDefault {
           userSession = UserSession(user.id).toJson
           sessionHeader = Header.Authorization.Bearer(jwtEncode(userSession, config.session.jwt_secret_key))
           request = Request.get(url = URL.root.port(port) / "user" / "my").addHeader(sessionHeader)
-          _ <- TestServer.addRoutes(routes)
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           responseBody <- response.body.asString
         } yield assertTrue(
@@ -57,14 +60,11 @@ object UserRoutesSpec extends ZIOSpecDefault {
         )
       },
       test("Should return 401 status if user is not authorized") {
-        val username = UUID.randomUUID().toString
-        val password = "1234"
-        val payload = SignUpDTO(username = username, password = password, name = None)
         for {
           client <- ZIO.service[Client]
           port <- ZIO.serviceWithZIO[Server](_.port)
           request = Request.get(url = URL.root.port(port) / "user" / "my")
-          _ <- TestServer.addRoutes(routes)
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
         } yield assertTrue(
           response.status == Status.Unauthorized,
@@ -84,7 +84,7 @@ object UserRoutesSpec extends ZIOSpecDefault {
           adminSession = UserSession(admin.id).toJson
           sessionHeader = Header.Authorization.Bearer(jwtEncode(adminSession, config.session.jwt_secret_key))
           request = Request.get(url = URL.root.port(port) / "user" / user.id.toString).addHeader(sessionHeader)
-          _ <- TestServer.addRoutes(routes)
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           responseBody <- response.body.asString
           userDTO <- ZIO.fromEither(responseBody.fromJson[UserDTO])
@@ -106,7 +106,7 @@ object UserRoutesSpec extends ZIOSpecDefault {
           adminSession = UserSession(notAdmin.id).toJson
           sessionHeader = Header.Authorization.Bearer(jwtEncode(adminSession, config.session.jwt_secret_key))
           request = Request.get(url = URL.root.port(port) / "user" / user.id.toString).addHeader(sessionHeader)
-          _ <- TestServer.addRoutes(routes)
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           responseBody <- response.body.asString
         } yield assertTrue(
@@ -115,7 +115,6 @@ object UserRoutesSpec extends ZIOSpecDefault {
         )
       },
       test("Should return not found if there is no an user with specified id") {
-        val name = UUID.randomUUID().toString
         for {
           config <- ZIO.service[AppConfig]
           authService <- ZIO.service[AuthService]
@@ -125,7 +124,7 @@ object UserRoutesSpec extends ZIOSpecDefault {
           adminSession = UserSession(admin.id).toJson
           sessionHeader = Header.Authorization.Bearer(jwtEncode(adminSession, config.session.jwt_secret_key))
           request = Request.get(url = URL.root.port(port) / "user" / UUID.randomUUID().toString).addHeader(sessionHeader)
-          _ <- TestServer.addRoutes(routes)
+          _ <- TestServer.addRoutes(apiRoutes)
           response <- client.batched(request)
           responseBody <- response.body.asString
         } yield assertTrue(
@@ -145,6 +144,8 @@ object UserRoutesSpec extends ZIOSpecDefault {
     Quill.DataSource.fromPrefix("database"),
     UserRepositoryImpl.layer,
     AuthServiceImpl.layer,
+    ProductRepositoryImpl.layer,
+    ZLayer.succeed(LocalFileStorage(Path("/Users/burize/Desktop/rest_api_storage"))),
     //DataBaseIsolation.layer, // TODO: does not work. Probably, Isolation and Route handler use different db connection
   )
 }

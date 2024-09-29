@@ -35,7 +35,7 @@ object UserRoutes:
         UserRepository.getById(id).map {
           case Some(user) => Response(body = Body.from(UserDTO(id = user.id, name = user.name)))
           case None       => Response.notFound(s"User is not found!")
-        }.mapError(error => Response.internalServerError(s"Failed to sign in the user: $error"))
+        }
       },
     ) @@ PermissionAdmin
 

@@ -29,8 +29,4 @@ object StorageRoutes:
           result <- FileStorage.uploadFile(file = file, fileName = fileName)
         yield Response.text(result)
       },
-    ).handleError(error =>
-      error match
-        case NotFoundError(message) => Response.notFound(message)
-        case _                      => Response.internalServerError("500 error")
     )

@@ -25,7 +25,7 @@ object SignInDTO:
   given Schema[SignInDTO] = DeriveSchema.gen[SignInDTO]
 
 object AuthRoutes:
-  def apply(): Routes[AuthService & UserRepository & AppConfig, Response] =
+  def apply() =
     Routes(
       Method.POST / "signup" -> handler { (request: Request) =>
         for
@@ -33,11 +33,6 @@ object AuthRoutes:
           response <- AuthService
                         .signUp(dto.username, dto.password, dto.name)
                         .map(user => Response.text(user.id.toString))
-                        .mapError(
-                          _ match
-                            case AlreadyExist(error) => Response(status = Status.Conflict, body = Body.fromString(error))
-                            case _ => Response.internalServerError("Failed to register the user")
-                        )
         yield response
       },
       Method.POST / "signin" -> handler { (request: Request) =>
@@ -45,11 +40,6 @@ object AuthRoutes:
           config <- ZIO.service[AppConfig]
           dto       <- request.body.to[SignInDTO].orElseFail(Response.badRequest)
           user  <- AuthService.signIn(dto.username, dto.password)
-                              .mapError(
-                                _ match
-                                  case Unauthorized(error) => Response.unauthorized(error)
-                                  case _ => Response.internalServerError("Failed to sign in the user"),
-                              )
           userSession = UserSession(user.id).toJson
           sessionHeader = Header.Authorization.Bearer(jwtEncode(userSession, config.session.jwt_secret_key))
         yield Response.ok.addHeader(sessionHeader)
