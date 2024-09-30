@@ -14,18 +14,18 @@ import io.getquill.jdbczio.Quill.Postgres
 import io.getquill.{PostgresZioJdbcContext, SnakeCase}
 import java.util.UUID
 
-import api.apiRoutes
 import core.AppConfig
-import product.ProductRepositoryImpl
-import storage.LocalFileStorage
-import testUtils.DataBaseIsolation
 import utils.{checkPassword, jwtDecode}
+import api.RouteErrorHandler
+
 
 
 object AuthRoutesSpec extends ZIOSpecDefault {
   val dsDelegate = new PostgresZioJdbcContext(SnakeCase)
   import dsDelegate.*
 
+  val apiRoutes = AuthRoutes().handleError(RouteErrorHandler)
+  
   override val bootstrap: ZLayer[Any, Any, TestEnvironment] =
     Runtime.setConfigProvider(AppConfig.configProvider) ++ testEnvironment
 
@@ -118,19 +118,15 @@ object AuthRoutesSpec extends ZIOSpecDefault {
       },
     ),
   ).provide(
-    ZLayer.succeed(Server.Config.default.onAnyOpenPort),
     Client.default,
     NettyDriver.customized,
     ZLayer.succeed(NettyConfig.defaultWithFastShutdown),
+    ZLayer.succeed(Server.Config.default.onAnyOpenPort),
     AppConfig.layer,
     TestServer.layer,
     Quill.Postgres.fromNamingStrategy(SnakeCase),
     Quill.DataSource.fromPrefix("database"),
     UserRepositoryImpl.layer,
     AuthServiceImpl.layer,
-    ProductRepositoryImpl.layer,
-    ZLayer.succeed(LocalFileStorage(Path("/Users/burize/Desktop/rest_api_storage"))),
-
-    //DataBaseIsolation.layer, // TODO: does not work. Probably, Isolation and Route handler use different db connection
   )
 }

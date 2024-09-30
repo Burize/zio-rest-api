@@ -7,7 +7,7 @@ import zio.*
 import java.sql.Connection
 import javax.sql.DataSource
 
-
+// TODO: does not work with api tests. Probably, Isolation and Route handler use different db connection.
 def rollbackDataBase(): ZIO[DataSource & Quill.Postgres[SnakeCase] & Scope, Throwable, Unit] =
   for {
     ctx <- ZIO.service[Quill.Postgres[SnakeCase]]

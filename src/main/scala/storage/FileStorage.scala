@@ -9,7 +9,7 @@ import zio.stream.{Stream, ZStream}
 
 import java.util.UUID
 
-import core.NotFoundError
+import core.NotFound
 
 trait FileStorage:
 
@@ -34,5 +34,5 @@ class LocalFileStorage(folderPath: Path) extends FileStorage:
     val filePath = folderPath / fileName
     ZIO.ifZIO(Files.exists(filePath))(
       onTrue = ZIO.succeed(ZStream.fromPath(filePath.toFile.toPath)),
-      onFalse = ZIO.fail(NotFoundError(s"There is not file with name=$fileName")),
+      onFalse = ZIO.fail(NotFound(s"There is no file with name=$fileName")),
     )

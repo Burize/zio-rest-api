@@ -19,13 +19,13 @@ object StorageRoutes:
             Header.ContentType(MediaType.application.`octet-stream`),
             Header.ContentDisposition.attachment(fileName),
           ),
-          body = Body.fromStream(fileStream),
+          body = Body.fromStreamChunked(fileStream),
         )
       },
       Method.POST / "storage" / string("fileName") -> handler { (fileName: String, request: Request) =>
         for
           file   <- request.body.asChunk
-          result <- FileStorage.uploadFile(file = file, fileName = fileName)
-        yield Response.text(result)
+          _ <- FileStorage.uploadFile(file = file, fileName = fileName)
+        yield Response.text("The file has been uploaded")
       },
     )
