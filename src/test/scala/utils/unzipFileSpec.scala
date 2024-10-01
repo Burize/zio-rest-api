@@ -12,7 +12,7 @@ import java.nio.file.NoSuchFileException
 
 
 object unzipFileSpec extends ZIOSpecDefault {
-  def spec = suite("unzipFile")(
+  def spec = suite("Unzip file")(
     test("Should extract all files and folders from an archive to specified folder. Empty folders should not be extracted.") {
       for {
         tempDirectory <- Files.createTempDirectoryScoped(prefix = None, fileAttributes = Nil)

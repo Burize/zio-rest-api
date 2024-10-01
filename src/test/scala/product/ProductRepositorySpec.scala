@@ -18,7 +18,7 @@ object ProductRepositorySpec extends ZIOSpecDefault {
   val dsDelegate = new PostgresZioJdbcContext(SnakeCase)
   import dsDelegate.*
 
-  def spec = suite("ProductRepository")(
+  def spec = suite("Product repository")(
     test("If the product already exists, then its description must be updated on upsert") {
         for {
           _ <- ProductRepository.upsertMany(

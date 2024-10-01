@@ -13,3 +13,5 @@ project/project/
 project/target/
 application.conf
 *.scala.semanticdb
+
+local_storage/

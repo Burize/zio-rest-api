@@ -29,7 +29,7 @@ object AuthRoutesSpec extends ZIOSpecDefault {
   override val bootstrap: ZLayer[Any, Any, TestEnvironment] =
     Runtime.setConfigProvider(AppConfig.configProvider) ++ testEnvironment
 
-  def spec = suite("auth routes") (
+  def spec = suite("Auth routes") (
     suite("Sign up route") (
       test("Should be signed up with specified username, password and name") {
         val username = UUID.randomUUID().toString

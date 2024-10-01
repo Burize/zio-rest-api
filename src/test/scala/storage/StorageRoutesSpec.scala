@@ -17,7 +17,7 @@ import utils.jwtEncode
 import java.nio.charset.StandardCharsets
 
 
-val fileStorageFolder: Path = Path("/Users/burize/Desktop/rest_api_storage")
+val fileStorageFolder: Path = Path("./local_storage/tests")
 
 object StorageRoutesSpec extends ZIOSpecDefault {
   val apiRoutes = StorageRoutes().handleError(RouteErrorHandler)
@@ -25,7 +25,7 @@ object StorageRoutesSpec extends ZIOSpecDefault {
   override val bootstrap: ZLayer[Any, Any, TestEnvironment] =
     Runtime.setConfigProvider(AppConfig.configProvider) ++ testEnvironment
 
-  def spec = suite("storage routes") (
+  def spec = suite("Storage routes") (
     suite("Download a file by a name") (
       test("Should download a file by a name") {
         for {

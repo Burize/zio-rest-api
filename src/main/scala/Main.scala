@@ -25,5 +25,5 @@ object App extends ZIOAppDefault:
       UserRepositoryImpl.layer,
       ProductRepositoryImpl.layer,
       AuthServiceImpl.layer,
-      ZLayer.succeed(LocalFileStorage(Path("/Users/burize/Desktop/rest_api_storage"))),
+      ZLayer.succeed(LocalFileStorage(Path("./local_storage"))),
     )

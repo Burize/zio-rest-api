@@ -30,7 +30,7 @@ object UserRoutesSpec extends ZIOSpecDefault {
   override val bootstrap: ZLayer[Any, Any, TestEnvironment] =
     Runtime.setConfigProvider(AppConfig.configProvider) ++ testEnvironment
 
-  def spec = suite("auth routes") (
+  def spec = suite("Auth routes") (
     suite("Get own user info") (
       test("Should be able retrieve own info") {
         val username = UUID.randomUUID().toString
