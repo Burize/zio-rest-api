@@ -7,7 +7,6 @@ import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 
-
 object StorageRoutes:
   def apply() =
     Routes(
@@ -24,8 +23,9 @@ object StorageRoutes:
       },
       Method.POST / "storage" / string("fileName") -> handler { (fileName: String, request: Request) =>
         for
-          file   <- request.body.asChunk
-          _ <- FileStorage.uploadFile(file = file, fileName = fileName)
+          file <- request.body.asChunk
+          _    <- FileStorage.uploadFile(file = file, fileName = fileName)
         yield Response.text("The file has been uploaded")
       },
     )
+end StorageRoutes

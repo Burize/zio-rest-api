@@ -1,15 +1,14 @@
 package product
 
-import io.getquill.{JsonbValue, MappedEncoding}
-import zio.json.{JsonDecoder, JsonEncoder}
+import io.getquill.{ JsonbValue, MappedEncoding }
+import zio.json.{ JsonDecoder, JsonEncoder }
 import zio.schema.annotation.fieldName
-import zio.schema.{DeriveSchema, Schema}
+import zio.schema.{ DeriveSchema, Schema }
 
 import java.util.UUID
 
 enum ProductType:
   case Apparel, ConsumerProducts, Furniture, HomeAppliance
-
 
 object ProductType:
   given productTypeDbEncoder: MappedEncoding[ProductType, String] =
@@ -39,11 +38,11 @@ object Language:
     MappedEncoding[JsonbValue[Map[Language, String]], Map[Language, String]](_.value)
 
 final case class Product(
-  id: UUID,
-  productType: ProductType,
-  title: String,
-  description: Map[Language, String],
-)
+    id: UUID,
+    productType: ProductType,
+    title: String,
+    description: Map[Language, String],
+  )
 
 // https://github.com/zio/zio-protoquill/issues/283
 // Can not use Option[JsonbValue[Map[Language, String]]], because Quill wrongly sets type to varchar instead of jsonb when value is None

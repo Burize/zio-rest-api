@@ -1,11 +1,11 @@
 package auth
 
-import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
+import zio.json.{ DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder }
 
 import java.util.UUID
 
 final case class UserSession(
-    userId: UUID,
+    userId: UUID
   )
 
 object UserSession:

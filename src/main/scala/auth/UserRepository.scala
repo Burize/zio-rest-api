@@ -8,12 +8,22 @@ import zio.*
 import java.util.UUID
 
 trait UserRepository:
-  def create(username: String, password: String, name: Option[String] = None, isAdmin: Boolean = false): ZIO[UserRepository, Throwable, User]
+  def create(
+      username: String,
+      password: String,
+      name: Option[String] = None,
+      isAdmin: Boolean = false,
+    ): ZIO[UserRepository, Throwable, User]
   def getById(id: UUID): ZIO[UserRepository, Throwable, Option[User]]
   def findByUsername(username: String): ZIO[UserRepository, Throwable, Option[User]]
 
 object UserRepository:
-  def create(username: String, password: String, name: Option[String] = None, isAdmin: Boolean = false): ZIO[UserRepository, Throwable, User] =
+  def create(
+      username: String,
+      password: String,
+      name: Option[String] = None,
+      isAdmin: Boolean = false,
+    ): ZIO[UserRepository, Throwable, User] =
     ZIO.serviceWithZIO[UserRepository](_.create(username, password, name, isAdmin))
 
   def getById(id: UUID): ZIO[UserRepository, Throwable, Option[User]] =
@@ -25,7 +35,12 @@ object UserRepository:
 case class UserRepositoryImpl(quill: Quill.Postgres[SnakeCase]) extends UserRepository:
   import quill.*
 
-  def create(username: String, password: String, name: Option[String] = None, isAdmin: Boolean = false): Task[User] =
+  def create(
+      username: String,
+      password: String,
+      name: Option[String] = None,
+      isAdmin: Boolean = false,
+    ): Task[User] =
     val user = User(UUID.randomUUID(), username, password, name, isAdmin)
     run(
       quote {

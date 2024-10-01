@@ -9,9 +9,8 @@ import zio.*
 import javax.sql.DataSource
 
 object DatabaseMigrator:
-  def migrate: RIO[DataSource, MigrateResult] = {
+  def migrate: RIO[DataSource, MigrateResult] =
     for
       dataSource <- ZIO.service[DataSource]
-      res <- ZIO.attempt(Flyway.configure().dataSource(dataSource).load().migrate()).orDie
+      res        <- ZIO.attempt(Flyway.configure().dataSource(dataSource).load().migrate()).orDie
     yield res
-  }

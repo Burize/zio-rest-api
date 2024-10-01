@@ -1,8 +1,8 @@
 package utils
 
-import zio.nio.file.{Files, Path}
+import zio.nio.file.{ Files, Path }
 import zio.stream.ZStream
-import zio.{Task, ZIO}
+import zio.{ Task, ZIO }
 
 import java.util.zip.ZipFile
 import scala.jdk.CollectionConverters.*

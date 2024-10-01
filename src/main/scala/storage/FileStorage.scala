@@ -2,10 +2,10 @@ package storage
 
 import zio.*
 import zio.http.*
-import zio.nio.file.{Files, Path}
+import zio.nio.file.{ Files, Path }
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
-import zio.schema.{DeriveSchema, Schema}
-import zio.stream.{Stream, ZStream}
+import zio.schema.{ DeriveSchema, Schema }
+import zio.stream.{ Stream, ZStream }
 
 import java.util.UUID
 

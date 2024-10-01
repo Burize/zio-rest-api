@@ -1,8 +1,8 @@
 package middlewares
 
-import auth.{User, UserRepository}
+import auth.{ User, UserRepository }
 import core.AppConfig
-import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim}
+import pdi.jwt.{ Jwt, JwtAlgorithm, JwtClaim }
 import utils.jwtDecode
 import zio.*
 import zio.http.*
@@ -15,6 +15,7 @@ val PermissionAdmin: HandlerAspect[User, Unit] =
   HandlerAspect.interceptIncomingHandler(Handler.fromFunctionZIO[Request] { request =>
     for
       currentUser <- ZIO.service[User]
-      _ <- if(currentUser.admin) ZIO.succeed("") else ZIO.fail(Response.unauthorized("It is available only for admin"))
+      _           <-
+        if currentUser.admin then ZIO.succeed("") else ZIO.fail(Response.unauthorized("It is available only for admin"))
     yield (request, ())
   })

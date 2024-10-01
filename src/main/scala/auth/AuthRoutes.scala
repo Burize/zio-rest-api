@@ -1,17 +1,21 @@
 package auth
 
-import core.{AlreadyExist, AppConfig, Unauthorized}
+import core.{ AlreadyExist, AppConfig, Unauthorized }
 import utils.jwtEncode
 import zio.*
 import zio.http.*
 import zio.json.*
 import zio.schema.codec.JsonCodec.schemaBasedBinaryCodec
-import zio.schema.{DeriveSchema, Schema}
+import zio.schema.{ DeriveSchema, Schema }
 
 import java.util.UUID
 import scala.util.*
 
-case class SignUpDTO(username: String, password: String, name: Option[String])
+case class SignUpDTO(
+    username: String,
+    password: String,
+    name: Option[String],
+  )
 
 object SignUpDTO:
   given Schema[SignUpDTO] = DeriveSchema.gen[SignUpDTO]
@@ -34,11 +38,12 @@ object AuthRoutes:
       },
       Method.POST / "signin" -> handler { (request: Request) =>
         for
-          config <- ZIO.service[AppConfig]
-          dto       <- request.body.to[SignInDTO].orElseFail(Response.badRequest)
-          user  <- AuthService.signIn(dto.username, dto.password)
-          userSession = UserSession(user.id).toJson
+          config       <- ZIO.service[AppConfig]
+          dto          <- request.body.to[SignInDTO].orElseFail(Response.badRequest)
+          user         <- AuthService.signIn(dto.username, dto.password)
+          userSession   = UserSession(user.id).toJson
           sessionHeader = Header.Authorization.Bearer(jwtEncode(userSession, config.session.jwt_secret_key))
         yield Response.ok.addHeader(sessionHeader)
       },
     )
+end AuthRoutes

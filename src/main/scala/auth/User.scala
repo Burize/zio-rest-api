@@ -1,6 +1,6 @@
 package auth
 
-import zio.schema.{DeriveSchema, Schema}
+import zio.schema.{ DeriveSchema, Schema }
 
 import java.util.UUID
 
@@ -9,5 +9,5 @@ final case class User(
     username: String,
     password: String,
     name: Option[String],
-    admin: Boolean
+    admin: Boolean,
   )
